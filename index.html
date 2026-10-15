@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ripple.io change control prototype</title>
+<meta name="description" content="Clickable prototype of ripple.io, change control for event management companies. Sample data, fictional event.">
+<meta property="og:title" content="ripple.io change control prototype">
+<meta property="og:description" content="Follow one client change from request to cost, approval, vendor acknowledgement and record. Sample data, fictional event.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='14' stroke='%230F5C8A' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='6' stroke='%230F5C8A' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0;background:#F3F5F7}
+button{font-family:inherit;cursor:pointer}
+nav{align-self:stretch}
+button:focus-visible,input:focus-visible{outline:3px solid #0F5C8A;outline-offset:2px}
+.proto-note{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#14232F;color:#ffffff;font-size:14px;line-height:1.45;padding:10px 32px;text-align:center}
+@media (max-width:900px){
+  nav{flex:1 1 100% !important;min-height:0 !important;flex-direction:row !important;flex-wrap:wrap;border-right:0 !important;border-bottom:1px solid #D8DFE5}
+  nav button{width:auto !important}
+  aside{flex:1 1 100% !important;padding:0 32px 64px !important}
+  header{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="proto-note">Clickable prototype with sample data. Northwind Partner Summit is a fictional event. Buttons marked Prototype control stand in for things other people do.</div>
+<div id="app"></div>
+<noscript><p style="font-family:system-ui;padding:32px">This prototype needs JavaScript.</p></noscript>
+<script type="text/x-template" id="tpl">
+
+<div style="font-family:'Plus Jakarta Sans', system-ui, sans-serif; color:#14232F; background:#F3F5F7; min-height:100vh; display:flex; flex-direction:column">
+
+<header style="background:#ffffff; border-bottom:1px solid #D8DFE5; padding:10px 32px; min-height:72px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:16px">
+  <div style="display:flex; align-items:center; gap:10px; flex:1 1 0">
+    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="14" stroke="#0F5C8A" stroke-width="3"/><circle cx="16" cy="16" r="6" stroke="#0F5C8A" stroke-width="3"/></svg>
+    <span style="font-size:22px; font-weight:700">ripple.io</span>
+  </div>
+  <div style="flex:2 1 0; text-align:center; font-size:22px; font-weight:700">Northwind Partner Summit, 29 October</div>
+  <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; flex:1 1 0">
+    <div style="padding:8px 14px; background:#14232F; color:#ffffff; border-radius:999px; font-size:14px; font-weight:700; white-space:nowrap">{{ versionLabel }}</div>
+    <div style="width:44px; height:44px; border-radius:999px; background:#E6F0F7; color:#0F5C8A; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700" aria-label="Signed in as Amara Reyes">AR</div>
+  </div>
+</header>
+
+<div style="display:flex; flex-wrap:wrap; align-items:flex-start; flex:1">
+
+<nav aria-label="Stages" style="flex:0 0 240px; box-sizing:border-box; padding:20px 16px; display:flex; flex-direction:column; gap:6px; background:#ffffff; border-right:1px solid #D8DFE5; min-height:calc(100vh - 72px)">
+  <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+    <button onClick="{{ n.go }}" style="{{ n.style }}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ n.icon }}"/></svg>
+      <span style="flex:1; text-align:left">{{ n.label }}</span>
+      <span style="{{ n.badgeStyle }}">{{ n.badge }}</span>
+    </button>
+  </sc-for>
+</nav>
+
+
+<main style="flex:1 1 560px; min-width:0; padding:28px 32px 64px; display:flex; flex-direction:column; gap:24px; box-sizing:border-box">
+
+<!-- SCREEN 1: CONFIRMED PLAN -->
+<sc-if value="{{ isPlan }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <h1 style="margin:0; font-size:34px; line-height:1.15; font-weight:700">Northwind Partner Summit</h1>
+      <p style="margin:0; font-size:16px; color:#3E4E5A">{{ planSubtitle }}</p>
+    </div>
+    <sc-if value="{{ showInbox }}" hint-placeholder-val="{{ true }}">
+      <section style="background:#FFF4E0; border:1px solid #D9A441; border-radius:14px; padding:24px; display:flex; flex-wrap:wrap; gap:16px 24px; align-items:center; justify-content:space-between; box-sizing:border-box">
+        <div style="flex:1 1 480px; display:flex; flex-direction:column; gap:8px">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+            <strong style="font-size:18px; color:#5E3B00">New request from the client, today 09:12</strong>
+            <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#E6E8FB; color:#2C3290; font-size:13px; font-weight:700">Automation</span>
+          </div>
+          <p style="margin:0; font-size:16px; line-height:1.5; color:#4A3300">Elena Ruiz, Northwind: "We have added a second partner group. Can we go from 190 to 220 guests on the day? The programme stays the same."</p>
+          <p style="margin:0; font-size:14px; line-height:1.45; color:#4A3300">ripple.io read the message and drafted a change request against the confirmed plan. Nothing has been sent to any vendor.</p>
+        </div>
+        <button onClick="{{ toChange }}" style="min-height:52px; padding:0 28px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:17px; font-weight:700">Review the change</button>
+      </section>
+    </sc-if>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start">
+      <section style="flex:3 1 560px; background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+        <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Confirmed vendors and terms</h2>
+        <p style="margin:0 0 8px; font-size:14px; color:#4D5E6B">ripple.io keeps the contract terms next to each line, so the cost of a change is known before anyone replies.</p>
+        <sc-for list="{{ planLines }}" as="p" hint-placeholder-count="8">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; padding:12px 0; border-top:1px solid #E6EBEF">
+            <div style="flex:1 1 320px; display:flex; flex-direction:column; gap:2px"><span style="font-size:16px; font-weight:600">{{ p.name }}</span><span style="font-size:14px; line-height:1.4; color:#4D5E6B">{{ p.terms }}</span></div>
+            <span style="font-size:16px; font-weight:700">{{ p.amount }}</span>
+          </div>
+        </sc-for>
+      </section>
+      <div style="flex:2 1 380px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+          <h2 style="margin:0; font-size:20px; font-weight:700">Budget, £60,000</h2>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px"><span style="font-size:30px; font-weight:700">{{ planCommitted }}</span><span style="font-size:15px; color:#4D5E6B">committed</span></div>
+          <div style="height:12px; background:#E6EBEF; border-radius:999px; overflow:hidden"><div style="{{ planBar }}"></div></div>
+          <p style="margin:0; font-size:15px; color:#3E4E5A">{{ planHeadroom }}</p>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Team and approval rules</h2>
+          <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><span><strong>Amara</strong>, Programme manager</span><span style="color:#4D5E6B">Approves under £1,000</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><span><strong>Dev</strong>, Vendor liaison</span><span style="color:#4D5E6B">Chases vendors</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><span><strong>Priya</strong>, Door lead</span><span style="color:#4D5E6B">Stewards, registration</span></div>
+          <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><span><strong>Sam</strong>, Stage manager</span><span style="color:#4D5E6B">Run sheet</span></div>
+          <p style="margin:8px 0 0; font-size:14px; line-height:1.45; color:#4D5E6B">Any change over £1,000 needs the client's written approval before a vendor is told.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- SCREEN 2: CHANGE REQUEST AND IMPACT -->
+<sc-if value="{{ isChange }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; background:#ffffff; border:1px solid #D8DFE5; border-radius:12px">
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#FFF0D2; color:#7A4B00; font-size:13px; font-weight:700">Augmentation</span>
+      <span style="font-size:15px; color:#3E4E5A">ripple.io traces the change through the plan and shows the cost and the contract term behind each line. You choose how to absorb it.</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <h1 style="margin:0; font-size:34px; line-height:1.15; font-weight:700">Change request: {{ guestsTotal }} guests instead of 190</h1>
+      <p style="margin:0; font-size:16px; color:#3E4E5A">Requested by Elena Ruiz, Northwind, today at 09:12. Adjust the number to see the impact change.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start">
+      <div style="flex:3 1 560px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; box-sizing:border-box">
+          <div style="display:flex; flex-direction:column; gap:4px"><strong style="font-size:18px">Extra guests</strong><span style="font-size:14px; color:#4D5E6B">Headcount goes from 190 to {{ guestsTotal }}</span></div>
+          <div style="display:flex; align-items:center; gap:12px">
+            <button onClick="{{ fewer }}" aria-label="Fewer guests" style="width:48px; height:48px; border:1px solid #9FB0BD; border-radius:10px; background:#ffffff; color:#14232F; font-size:24px; font-weight:700">-</button>
+            <span style="min-width:72px; text-align:center; font-size:28px; font-weight:700">+{{ added }}</span>
+            <button onClick="{{ more }}" aria-label="More guests" style="width:48px; height:48px; border:1px solid #9FB0BD; border-radius:10px; background:#ffffff; color:#14232F; font-size:24px; font-weight:700">+</button>
+          </div>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 4px; font-size:20px; font-weight:700">What this change touches</h2>
+          <p style="margin:0 0 8px; font-size:14px; color:#4D5E6B">Every line below is a task someone has to do and a vendor who has to be told.</p>
+          <sc-for list="{{ impact }}" as="i" hint-placeholder-count="5">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; padding:14px 0; border-top:1px solid #E6EBEF">
+              <div style="flex:1 1 360px; display:flex; flex-direction:column; gap:3px">
+                <span style="font-size:16px; font-weight:600">{{ i.what }}</span>
+                <span style="font-size:14px; color:#4D5E6B">{{ i.who }}. {{ i.due }}</span>
+                <span style="font-size:14px; line-height:1.4; color:#3E4E5A">{{ i.why }}</span>
+              </div>
+              <span style="font-size:17px; font-weight:700">{{ i.cost }}</span>
+            </div>
+          </sc-for>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; padding:16px 0 0; border-top:2px solid #14232F">
+            <strong style="font-size:18px">Total added cost</strong><strong style="font-size:26px">{{ totalText }}</strong>
+          </div>
+        </section>
+        <sc-if value="{{ showAv }}" hint-placeholder-val="{{ true }}">
+          <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:14px; box-sizing:border-box">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+              <h2 style="margin:0; font-size:20px; font-weight:700">Who covers the Gallery screen and sound?</h2>
+              <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#FFF0D2; color:#7A4B00; font-size:13px; font-weight:700">Augmentation</span>
+            </div>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#3E4E5A">Soundwell has one crew committed to the main hall. ripple.io pulled a replacement from your past quotes. Quotes older than 90 days are marked as estimates.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:16px">
+              <sc-for list="{{ avOptions }}" as="o" hint-placeholder-count="2">
+                <button onClick="{{ o.pick }}" style="{{ o.style }}">
+                  <strong style="font-size:17px">{{ o.name }}</strong>
+                  <span style="font-size:20px; font-weight:700">{{ o.price }}</span>
+                  <span style="font-size:14px; line-height:1.45; font-weight:500">{{ o.note }}</span>
+                  <span style="font-size:13px; font-weight:700">{{ o.state }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+        </sc-if>
+      </div>
+      <div style="flex:2 1 380px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+          <h2 style="margin:0; font-size:20px; font-weight:700">Effect on the budget</h2>
+          <div style="display:flex; justify-content:space-between; font-size:15px"><span style="color:#4D5E6B">Contingency left today</span><strong>£3,380</strong></div>
+          <div style="display:flex; justify-content:space-between; font-size:15px"><span style="color:#4D5E6B">Cost of this change</span><strong>{{ totalText }}</strong></div>
+          <div style="height:12px; background:#E6EBEF; border-radius:999px; overflow:hidden"><div style="{{ impactBar }}"></div></div>
+          <div style="padding:14px; border-radius:10px; font-size:16px; line-height:1.45; font-weight:700; {{ afterStyle }}">{{ afterText }}</div>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box">
+          <h2 style="margin:0; font-size:20px; font-weight:700">Who has to approve</h2>
+          <p style="margin:0; font-size:15px; line-height:1.5; color:#3E4E5A">{{ ruleText }}</p>
+          <p style="margin:0; font-size:14px; line-height:1.45; color:#4D5E6B">Nothing goes to a vendor until this is approved.</p>
+        </section>
+        <div>
+          <button onClick="{{ toApprove }}" style="min-height:52px; padding:0 28px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:17px; font-weight:700">Continue to approval</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- SCREEN 3: APPROVE AND PUBLISH -->
+<sc-if value="{{ isApprove }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; background:#ffffff; border:1px solid #D8DFE5; border-radius:12px">
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#DDF2E8; color:#0A5C42; font-size:13px; font-weight:700">Agent</span>
+      <span style="font-size:15px; color:#3E4E5A">After approval the agent tells each affected vendor only what changed for them, then chases until every one confirms. It never agrees a price.</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <h1 style="margin:0; font-size:34px; line-height:1.15; font-weight:700">Approve and publish version 2</h1>
+      <p style="margin:0; font-size:16px; color:#3E4E5A">{{ approveSubtitle }}</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start">
+      <div style="flex:3 1 560px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+          <h2 style="margin:0; font-size:20px; font-weight:700">Message to the client</h2>
+          <div style="padding:16px; background:#F3F5F7; border-radius:10px; font-size:15px; line-height:1.55; color:#14232F">{{ clientDraft }}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
+            <sc-if value="{{ showSend }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ sendToClient }}" style="min-height:52px; padding:0 28px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:17px; font-weight:700">Send to Elena Ruiz</button>
+            </sc-if>
+            <sc-if value="{{ showWait }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:15px; font-weight:600; color:#7A4B00">Sent. Waiting for the client.</span>
+              <button onClick="{{ clientApproves }}" style="min-height:48px; padding:0 20px; border:1px dashed #7A4B00; border-radius:10px; background:#FFF4E0; color:#5E3B00; font-size:15px; font-weight:700">Prototype control: client approves</button>
+            </sc-if>
+            <sc-if value="{{ showPublish }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:15px; font-weight:600; color:#0A5C42">Client approved. Logged with name and time.</span>
+              <button onClick="{{ publish }}" style="min-height:52px; padding:0 28px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:17px; font-weight:700">Publish version 2 to everyone</button>
+            </sc-if>
+            <sc-if value="{{ showPublishDirect }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ publishDirect }}" style="min-height:52px; padding:0 28px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:17px; font-weight:700">Approve and publish version 2</button>
+            </sc-if>
+            <sc-if value="{{ showPublished }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:15px; font-weight:700; color:#0A5C42">Version 2 is live. Version 1 is marked superseded.</span>
+            </sc-if>
+          </div>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px">
+            <h2 style="margin:0; font-size:20px; font-weight:700">Who is told, and whether they acted on it</h2>
+            <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#DDF2E8; color:#0A5C42; font-size:13px; font-weight:700">Agent</span>
+          </div>
+          <p style="margin:0 0 8px; font-size:14px; color:#4D5E6B">{{ ackSummary }}</p>
+          <sc-for list="{{ recipients }}" as="r" hint-placeholder-count="6">
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px 16px; padding:12px 0; border-top:1px solid #E6EBEF">
+              <div style="flex:1 1 360px; display:flex; flex-direction:column; gap:2px"><span style="font-size:16px; font-weight:600">{{ r.name }}</span><span style="font-size:14px; line-height:1.4; color:#4D5E6B">{{ r.msg }}</span></div>
+              <span style="{{ r.chip }}">{{ r.status }}</span>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+      <div style="flex:2 1 380px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Status</h2>
+          <sc-for list="{{ steps }}" as="p" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid #E6EBEF"><span style="{{ p.dot }}">{{ p.mark }}</span><span style="{{ p.text }}">{{ p.label }}</span></div>
+          </sc-for>
+        </section>
+        <sc-if value="{{ showHourControl }}" hint-placeholder-val="{{ false }}">
+          <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+            <h2 style="margin:0; font-size:20px; font-weight:700">Time passes</h2>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#3E4E5A">The agent checks every few hours. Move the clock to see what it finds.</p>
+            <div><button onClick="{{ advance }}" style="min-height:48px; padding:0 20px; border:1px dashed #6B7B87; border-radius:10px; background:#F3F5F7; color:#14232F; font-size:15px; font-weight:700">Prototype control: advance 24 hours</button></div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showChase }}" hint-placeholder-val="{{ false }}">
+          <section style="background:#FFF4E0; border:1px solid #D9A441; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+            <h2 style="margin:0; font-size:20px; font-weight:700; color:#5E3B00">Harbour Table has not replied</h2>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#4A3300">Sent 24 hours ago. Their usual reply time is 1.5 days. Final numbers are due Thursday 22 October, so there is still room.</p>
+            <div style="padding:12px 14px; background:#ffffff; border-radius:10px; font-size:14px; line-height:1.45; color:#3E4E5A">Draft reminder: "Hi, confirming the move from 190 to {{ guestsTotal }} covers for Thursday 29 October. Could you reply by Friday?"</div>
+            <div><button onClick="{{ sendReminder }}" style="min-height:46px; padding:0 20px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:15px; font-weight:700">Approve reminder</button></div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showReminded }}" hint-placeholder-val="{{ false }}">
+          <section style="background:#E3F4EC; border:1px solid #6DB896; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:10px; box-sizing:border-box">
+            <h2 style="margin:0; font-size:20px; font-weight:700; color:#0A4A35">Reminder sent</h2>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#0A4A35">The agent checks again tomorrow at 09:00 and tells you if there is still no reply.</p>
+            <sc-if value="{{ showHarbourReply }}" hint-placeholder-val="{{ false }}">
+              <div><button onClick="{{ harbourReplies }}" style="min-height:44px; padding:0 18px; border:1px dashed #0A4A35; border-radius:10px; background:#ffffff; color:#0A4A35; font-size:14px; font-weight:700">Prototype control: Harbour Table replies</button></div>
+            </sc-if>
+          </section>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- SCREEN 4: DAY OF -->
+<sc-if value="{{ isDay }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; background:#ffffff; border:1px solid #D8DFE5; border-radius:12px">
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#FFF0D2; color:#7A4B00; font-size:13px; font-weight:700">Augmentation</span>
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#DDF2E8; color:#0A5C42; font-size:13px; font-weight:700">Agent</span>
+      <span style="font-size:15px; color:#3E4E5A">When something moves on the day, ripple.io proposes a reflow that respects the hard stops. You approve, then it tells exactly the people affected.</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <h1 style="margin:0; font-size:34px; line-height:1.15; font-weight:700">Thursday 29 October, 09:50</h1>
+      <p style="margin:0; font-size:16px; color:#3E4E5A">{{ daySubtitle }}</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start">
+      <div style="flex:3 1 560px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px">
+            <h2 style="margin:0; font-size:20px; font-weight:700">Run sheet</h2>
+            <sc-if value="{{ showReport }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ reportLate }}" style="min-height:46px; padding:0 18px; border:1px solid #9FB0BD; border-radius:10px; background:#ffffff; color:#14232F; font-size:15px; font-weight:600">Report: keynote speaker is 25 minutes late</button>
+            </sc-if>
+          </div>
+          <sc-for list="{{ runSheet }}" as="r" hint-placeholder-count="5">
+            <div style="{{ r.row }}">
+              <div style="min-width:70px; font-size:14px; font-weight:700; color:#0F5C8A">{{ r.time }}</div>
+              <div style="flex:1 1 280px; display:flex; flex-direction:column; gap:2px"><span style="font-size:16px; font-weight:600">{{ r.what }}</span><span style="font-size:14px; color:#4D5E6B">{{ r.where }}. {{ r.who }}</span></div>
+              <span style="{{ r.tagStyle }}">{{ r.tag }}</span>
+            </div>
+          </sc-for>
+        </section>
+        <sc-if value="{{ showProposal }}" hint-placeholder-val="{{ false }}">
+          <section style="background:#FFF4E0; border:1px solid #D9A441; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:12px; box-sizing:border-box">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+              <h2 style="margin:0; font-size:20px; font-weight:700; color:#5E3B00">Dr Okoye arrives at 10:25. Proposed reflow</h2>
+              <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#FFF0D2; color:#7A4B00; font-size:13px; font-weight:700">Augmentation</span>
+            </div>
+            <p style="margin:0; font-size:15px; line-height:1.5; color:#4A3300">Run the partner panel first at 10:00 and the keynote at 10:45. The panellists are already briefed to arrive at 09:30. The breakouts, the 12:30 lunch hard stop and the 22:00 curfew are not touched.</p>
+            <p style="margin:0; font-size:14px; line-height:1.45; color:#4A3300">Other option: start the keynote at 10:25 and shorten the breakouts to 30 minutes. This one costs the client 15 minutes of content.</p>
+            <div><button onClick="{{ approveSwap }}" style="min-height:48px; padding:0 22px; border:0; border-radius:10px; background:{{ accent }}; color:#ffffff; font-size:16px; font-weight:700">Approve the swap and tell the team</button></div>
+          </section>
+        </sc-if>
+        <sc-if value="{{ showApplied }}" hint-placeholder-val="{{ false }}">
+          <section style="background:#E3F4EC; border:1px solid #6DB896; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:8px; box-sizing:border-box">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+              <h2 style="margin:0; font-size:20px; font-weight:700; color:#0A4A35">Version 3 is live. Four people told in under two minutes</h2>
+              <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#DDF2E8; color:#0A5C42; font-size:13px; font-weight:700">Agent</span>
+            </div>
+            <p style="margin:0; font-size:15px; line-height:1.55; color:#0A4A35">Sam: new running order. Soundwell AV: slide and mic cues swapped. The host: new script order. Panellists: you go on first. Harbour Table was not contacted because nothing changed for them.</p>
+          </section>
+        </sc-if>
+      </div>
+      <div style="flex:2 1 380px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Rooms</h2>
+          <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px; line-height:1.45"><strong>Main hall</strong>, 200 seats<br><span style="color:#4D5E6B">Registration, keynote, panel. Sam in charge.</span></div>
+          <sc-if value="{{ dayOverflow }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px; line-height:1.45"><strong>Gallery</strong>, overflow for {{ overflowGuests }} guests<br><span style="color:#4D5E6B">Live feed from the main hall. Booked in version 2.</span></div>
+          </sc-if>
+          <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px; line-height:1.45"><strong>Atrium</strong><br><span style="color:#4D5E6B">Lunch service from 12:30. Harbour Table.</span></div>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Hard stops</h2>
+          <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>12:30</strong> Lunch service window opens. Fixed by the caterer.</div>
+          <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>22:00</strong> Venue curfew.</div>
+          <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>18:30</strong> AV load out starts.</div>
+        </section>
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">On shift</h2>
+          <div style="padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>Amara</strong>, programme manager</div>
+          <div style="padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>Dev</strong>, vendor liaison</div>
+          <div style="padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>Priya</strong>, door lead, {{ stewardCount }} stewards</div>
+          <div style="padding:10px 0; border-top:1px solid #E6EBEF; font-size:15px"><strong>Sam</strong>, stage manager</div>
+        </section>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- SCREEN 5: RECORD -->
+<sc-if value="{{ isRecord }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; flex-direction:column; gap:24px">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; background:#ffffff; border:1px solid #D8DFE5; border-radius:12px">
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#E6E8FB; color:#2C3290; font-size:13px; font-weight:700">Automation</span>
+      <span style="font-size:15px; color:#3E4E5A">Every change, approval and vendor reply is logged as it happens. The history feeds the next quote and the next vendor choice.</span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <h1 style="margin:0; font-size:34px; line-height:1.15; font-weight:700">Change history and vendor record</h1>
+      <p style="margin:0; font-size:16px; color:#3E4E5A">Northwind Partner Summit. Sample data throughout.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start">
+      <section style="flex:3 1 560px; background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+        <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Change log</h2>
+        <sc-for list="{{ changeLog }}" as="c" hint-placeholder-count="3">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 16px; padding:14px 0; border-top:1px solid #E6EBEF">
+            <div style="flex:1 1 360px; display:flex; flex-direction:column; gap:3px">
+              <span style="font-size:16px; font-weight:600">{{ c.title }}</span>
+              <span style="font-size:14px; color:#4D5E6B">{{ c.meta }}</span>
+              <span style="font-size:14px; color:#3E4E5A">{{ c.approval }}</span>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px"><span style="font-size:17px; font-weight:700">{{ c.cost }}</span><span style="font-size:14px; color:#4D5E6B">{{ c.speed }}</span></div>
+          </div>
+        </sc-for>
+      </section>
+      <div style="flex:2 1 380px; display:flex; flex-direction:column; gap:24px">
+        <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:24px; display:flex; flex-direction:column; box-sizing:border-box">
+          <h2 style="margin:0 0 8px; font-size:20px; font-weight:700">Vendors on file</h2>
+          <p style="margin:0 0 8px; font-size:14px; line-height:1.45; color:#4D5E6B">Past quotes and replies, so a replacement is one look away.</p>
+          <sc-for list="{{ vendorsOnFile }}" as="v" hint-placeholder-count="5">
+            <div style="padding:12px 0; border-top:1px solid #E6EBEF; font-size:15px; line-height:1.45"><strong>{{ v.name }}</strong><br><span style="color:#4D5E6B">{{ v.line }}</span></div>
+          </sc-for>
+        </section>
+        <section style="background:#E6F0F7; border:1px solid #9CC0D9; border-radius:14px; padding:24px; display:flex; flex-direction:column; gap:8px; box-sizing:border-box">
+          <h2 style="margin:0; font-size:20px; font-weight:700">Client record, Northwind</h2>
+          <p style="margin:0; font-size:15px; line-height:1.5; color:#3E4E5A">3 events with you. Changes after sign off on every one. ripple.io will quote a change allowance into the next proposal.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+</main>
+
+<aside aria-label="Your workspace" style="flex:0 0 330px; box-sizing:border-box; padding:28px 24px 64px 0; display:flex; flex-direction:column; gap:20px">
+  <label style="display:block">
+    <span style="position:absolute; left:-9999px">Search</span>
+    <input type="search" placeholder="Search changes, vendors, tasks" style="width:100%; box-sizing:border-box; min-height:48px; padding:0 16px; border:1px solid #C5D0D9; border-radius:12px; background:#ffffff; font-family:inherit; font-size:15px; color:#14232F">
+  </label>
+  <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; overflow:hidden">
+    <div style="height:72px; background:#DCEBF5"></div>
+    <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 20px 20px; margin-top:-34px; text-align:center">
+      <div style="width:68px; height:68px; border-radius:999px; background:#ffffff; border:3px solid #ffffff; box-shadow:0 0 0 1px #D8DFE5; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#0F5C8A">AR</div>
+      <span style="font-size:12px; font-weight:700; letter-spacing:0.08em; color:#0F5C8A">PROGRAMME MANAGER</span>
+      <strong style="font-size:20px">Amara Reyes</strong>
+      <span style="font-size:15px; color:#4D5E6B">Harlow Events</span>
+      <span style="font-size:14px; color:#4D5E6B">Approves changes under £1,000</span>
+    </div>
+  </section>
+  <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:20px; display:flex; flex-direction:column; gap:4px">
+    <h2 style="margin:0 0 6px; font-size:20px; font-weight:700">Needs you</h2>
+    <sc-for list="{{ railItems }}" as="r" hint-placeholder-count="2">
+      <button onClick="{{ r.go }}" style="display:flex; align-items:center; gap:12px; text-align:left; min-height:56px; padding:10px 0; border:0; border-top:1px solid #E6EBEF; background:transparent; color:#14232F; width:100%">
+        <span style="{{ r.dot }}"></span>
+        <span style="display:flex; flex-direction:column; gap:2px"><span style="font-size:12px; font-weight:700; letter-spacing:0.06em; color:#0F5C8A">{{ r.kind }}</span><span style="font-size:15px; font-weight:600; line-height:1.35">{{ r.text }}</span></span>
+      </button>
+    </sc-for>
+    <sc-if value="{{ railEmpty }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0; padding-top:8px; border-top:1px solid #E6EBEF; font-size:15px; color:#4D5E6B">Nothing is waiting on you.</p>
+    </sc-if>
+  </section>
+  <section style="background:#ffffff; border:1px solid #D8DFE5; border-radius:14px; padding:20px; display:flex; flex-direction:column; gap:10px" aria-label="AI interaction key">
+    <h2 style="margin:0; font-size:16px; font-weight:700">How AI is used here</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:8px">
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#E6E8FB; color:#2C3290; font-size:13px; font-weight:700">Automation</span>
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#FFF0D2; color:#7A4B00; font-size:13px; font-weight:700">Augmentation</span>
+      <span style="display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; background:#DDF2E8; color:#0A5C42; font-size:13px; font-weight:700">Agent</span>
+    </div>
+  </section>
+</aside>
+
+</div>
+</div>
+</script>
+<script>
+class DCLogic {
+  constructor(props) { this.props = props || {}; this.state = {}; }
+  setState(p) { Object.assign(this.state, p); window.__render(); }
+}
+</script>
+<script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { screen: 'plan', added: 30, avPick: 'soundwell', sent: false, clientOk: false, published: false, hours: 0, reminded: false, harbourAck: false, dayStage: 'none' };
+  }
+  resetFlow(extra) {
+    this.setState(Object.assign({ sent: false, clientOk: false, published: false, hours: 0, reminded: false, harbourAck: false }, extra));
+  }
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent ?? '#0F5C8A';
+    const fmt = (n) => '£' + n.toLocaleString('en-GB');
+    const go = (id) => () => this.setState({ screen: id });
+
+    // numbers
+    const n = s.added;
+    const guests = 190 + n;
+    const overflow = guests > 200;
+    const catering = Math.round(n * 48 * 1.15);
+    const room = overflow ? 1800 : 0;
+    const av = overflow ? (s.avPick === 'soundwell' ? 950 : 780) : 0;
+    const stewN = Math.ceil(n / 15);
+    const stew = stewN * 210;
+    const print = n * 5;
+    const total = catering + room + av + stew + print;
+    const headroom = 3380;
+    const over = total > headroom;
+    const needsClient = total > 1000;
+    const avName = s.avPick === 'soundwell' ? 'Soundwell AV' : 'ScreenWorks';
+    const baseCommitted = 56620;
+    const version = 1 + (s.published ? 1 : 0) + (s.dayStage === 'applied' ? 1 : 0);
+
+    // tabs
+    const tabStyle = (on) => on
+      ? 'min-height:44px; padding:0 16px; border:0; border-radius:999px; background:#14232F; color:#ffffff; font-size:15px; font-weight:700'
+      : 'min-height:44px; padding:0 16px; border:1px solid #C5D0D9; border-radius:999px; background:#ffffff; color:#14232F; font-size:15px; font-weight:600';
+    const stages = [['plan', '1', 'Confirmed plan'], ['change', '2', 'Change request'], ['approve', '3', 'Approve and publish'], ['day', '4', 'Day of'], ['record', '5', 'Record']];
+    const icons = {'plan': 'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9z', 'change': 'M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3', 'approve': 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3', 'day': 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2', 'record': 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'};
+    const navBtn = (on) => 'display:flex; align-items:center; gap:12px; width:100%; min-height:48px; padding:0 14px; border:0; border-radius:12px; font-size:16px; box-sizing:border-box; ' + (on ? 'background:#E6F0F7; color:#0F5C8A; font-weight:700' : 'background:transparent; color:#3E4E5A; font-weight:500');
+    const pendingChange = !s.published;
+    const navItems = stages.map((x) => {
+      const showBadge = x[0] === 'change' && pendingChange;
+      return { label: x[2], icon: icons[x[0]], go: go(x[0]), style: navBtn(s.screen === x[0]),
+        badge: showBadge ? '1' : '', badgeStyle: showBadge ? 'display:inline-flex; align-items:center; justify-content:center; min-width:24px; height:24px; border-radius:999px; background:#D6362B; color:#ffffff; font-size:13px; font-weight:700' : 'display:none' };
+    });
+    const dotOn = 'width:10px; height:10px; border-radius:999px; background:#D6362B; flex:0 0 auto';
+    const railItems = [];
+    if (pendingChange) railItems.push({ kind: 'CHANGE REQUEST', text: 'Elena Ruiz wants ' + (190 + s.added) + ' guests instead of 190', go: go('change'), dot: dotOn });
+    if (s.published && s.hours === 24 && !s.harbourAck) railItems.push({ kind: 'VENDOR', text: 'Harbour Table has not acknowledged version 2', go: go('approve'), dot: dotOn });
+    if (s.dayStage === 'proposed') railItems.push({ kind: 'DAY OF', text: 'Keynote speaker is 25 minutes late. Reflow proposed', go: go('day'), dot: dotOn });
+    const railEmpty = railItems.length === 0;
+
+    // plan screen
+    const planLines = [
+      { name: 'The Foundry, venue', terms: 'Main hall holds 200. The Gallery is available as an add on at £1,800, held until Fri 16 Oct.', amount: fmt(14500) },
+      { name: 'Harbour Table Catering, 190 covers at £48', terms: 'Final numbers due Thu 22 Oct. Changes inside 28 days carry a 15% surcharge.', amount: fmt(9120) },
+      { name: 'Soundwell AV, main hall', terms: 'One crew of three. Second room needs a second technician.', amount: fmt(8400) },
+      { name: 'Lumen Staging, stage and decor', terms: 'Design locked Fri 16 Oct.', amount: fmt(6200) },
+      { name: 'Speakers and talent', terms: 'Fees fixed in each speaker agreement.', amount: fmt(12000) },
+      { name: 'Ward Security, 6 stewards', terms: 'One steward per 15 extra guests at £210 each.', amount: fmt(4300) },
+      { name: 'Printhaus, badges and signage', terms: 'Files due Mon 26 Oct.', amount: fmt(2100) }
+    ];
+    if (s.published) {
+      planLines.push({ name: 'Version 2: ' + n + ' more guests', terms: 'Approved by ' + (needsClient ? 'Elena Ruiz' : 'Amara') + ' and published to every affected vendor.', amount: fmt(total) });
+    }
+    const planCommitted = baseCommitted + (s.published ? total : 0);
+    const planLeft = 60000 - planCommitted;
+
+    // impact lines
+    const impact = [
+      { what: 'Catering: ' + n + ' more covers', who: 'Harbour Table, owner Dev', due: 'Final numbers due Thu 22 Oct', cost: fmt(catering), why: 'Includes the 15% surcharge in their terms for changes inside 28 days.' }
+    ];
+    if (overflow) {
+      impact.push({ what: 'Overflow room: the Gallery', who: 'The Foundry, owner Dev', due: 'Hold ends Fri 16 Oct', cost: fmt(room), why: 'The main hall holds 200. ' + guests + ' guests need a second room.' });
+      impact.push({ what: 'Gallery screen and sound', who: avName + ', owner Dev', due: 'Confirm by Fri 16 Oct', cost: fmt(av) + (s.avPick === 'soundwell' ? '' : ' est.'), why: s.avPick === 'soundwell' ? 'Soundwell needs a second technician for the Gallery.' : 'Estimate from a quote given in March. ScreenWorks has not reconfirmed the price.' });
+    }
+    impact.push({ what: stewN + (stewN === 1 ? ' more steward' : ' more stewards'), who: 'Ward Security, owner Priya', due: 'Rota due Mon 26 Oct', cost: fmt(stew), why: 'One steward per 15 extra guests.' });
+    impact.push({ what: 'Badges and signage for ' + n + ' more', who: 'Printhaus, owner Amara', due: 'Files due Mon 26 Oct', cost: fmt(print), why: '£5 a guest.' });
+    impact.push({ what: 'Registration cap raised to ' + guests, who: 'ripple.io', due: 'On approval', cost: '£0', why: 'Applied automatically once the change is approved.' });
+
+    const avOptions = [
+      { id: 'soundwell', name: 'Soundwell AV', price: fmt(950), note: 'Already on site. Replies in about a day. Needs a second technician.' },
+      { id: 'screenworks', name: 'ScreenWorks', price: fmt(780) + ' estimate', note: 'Quoted in March, 7 months ago, so treat it as an estimate until ScreenWorks reconfirms. 2 of 2 jobs on time. New to this venue.' }
+    ].map((o) => {
+      const on = s.avPick === o.id;
+      return { name: o.name, price: o.price, note: o.note, state: on ? 'Selected' : 'Tap to choose',
+        style: 'flex:1 1 280px; min-height:44px; text-align:left; display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:12px; color:#14232F; box-sizing:border-box; border:' + (on ? '2px solid ' + accent + '; background:#E6F0F7' : '1px solid #C5D0D9; background:#ffffff'),
+        pick: () => this.resetFlow({ avPick: o.id }) };
+    });
+
+    const afterText = over ? fmt(total - headroom) + ' over the contingency. Client approval needed.' : fmt(headroom - total) + ' of contingency left after this change.';
+    const afterStyle = over ? 'background:#FCE0D9; color:#8A2A16' : 'background:#DDF2E8; color:#0A5C42';
+    const ruleText = needsClient
+      ? 'Over £1,000, so Elena Ruiz must approve in writing. Her answer is logged with her name and the time.'
+      : 'Under £1,000 and inside the contingency, so Amara can approve it without the client.';
+
+    // approve screen
+    const clientDraft = 'Hi Elena, we can take the guest list from 190 to ' + guests + '. The extra cost is ' + fmt(total) + ', which is ' + (over ? fmt(total - headroom) + ' more than the contingency we hold. ' : 'inside the contingency we hold. ') +
+      (overflow ? 'The main hall holds 200, so the extra guests would sit in the Gallery with a live feed from the main hall. ' : '') +
+      (overflow && s.avPick === 'screenworks' ? 'The Gallery screen and sound figure is an estimate until ScreenWorks reconfirms its price. ' : '') + 'Catering carries a 15% surcharge because the change is inside 28 days. Please reply by Friday 16 October' + (overflow ? ' so the Gallery hold does not lapse.' : '.');
+    const approveSubtitle = needsClient ? 'This change is over £1,000, so the client signs off before any vendor is told.' : 'This change is within your limit. You can approve it yourself.';
+    const sentAny = needsClient ? s.sent : true;
+    const approvedAny = needsClient ? s.clientOk : true;
+    const stepDef = [
+      ['Drafted from the client message', true],
+      [needsClient ? 'Sent to the client' : 'Within your approval limit', sentAny],
+      [needsClient ? 'Client approved' : 'Approved by Amara', approvedAny && (needsClient || s.published)],
+      ['Published to vendors and team', s.published]
+    ];
+    const steps = stepDef.map((d) => ({
+      label: d[0], mark: d[1] ? 'x' : '',
+      dot: 'display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:999px; font-size:13px; font-weight:700; ' + (d[1] ? 'background:#0A5C42; color:#ffffff' : 'background:#ffffff; border:2px solid #C5D0D9; color:#ffffff'),
+      text: 'font-size:15px; font-weight:' + (d[1] ? '700' : '500') + '; color:' + (d[1] ? '#14232F' : '#4D5E6B')
+    }));
+
+    const recDef = [{ id: 'harbour', name: 'Harbour Table Catering', msg: 'Covers go from 190 to ' + guests + '. Final numbers still due Thu 22 Oct.' }];
+    if (overflow) {
+      recDef.push({ id: 'foundry', name: 'The Foundry', msg: 'Hold the Gallery for Thu 29 Oct, 09:00 to 22:00.' });
+      recDef.push({ id: 'av', name: avName, msg: s.avPick === 'soundwell' ? 'Second screen and sound feed in the Gallery. Rig from 08:00.' : 'Please confirm your price and availability for a second screen and sound feed in the Gallery. Rig from 08:00.' });
+    }
+    recDef.push({ id: 'ward', name: 'Ward Security', msg: 'Add ' + stewN + (stewN === 1 ? ' steward' : ' stewards') + ' to the rota.' });
+    recDef.push({ id: 'print', name: 'Printhaus', msg: 'Badges and signage for ' + n + ' more. Files due Mon 26 Oct.' });
+    recDef.push({ id: 'door', name: 'Door team, Priya', msg: 'Registration now closes at ' + guests + '.' });
+    const chipBase = 'display:inline-flex; align-items:center; min-height:28px; padding:0 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; ';
+    const chipC = { grey: chipBase + 'background:#EEF2F5; color:#3E4E5A', amber: chipBase + 'background:#FFF0D2; color:#7A4B00', green: chipBase + 'background:#DDF2E8; color:#0A5C42', red: chipBase + 'background:#FCE0D9; color:#8A2A16' };
+    const recipients = recDef.map((r) => {
+      let status = 'Not sent', chip = chipC.grey;
+      if (s.published) {
+        if (s.hours === 0) { status = 'Sent, waiting'; chip = chipC.amber; }
+        else if (r.id !== 'harbour') { status = 'Acknowledged'; chip = chipC.green; }
+        else if (s.harbourAck) { status = 'Acknowledged'; chip = chipC.green; }
+        else if (s.reminded) { status = 'Reminder sent'; chip = chipC.amber; }
+        else { status = 'No reply, 24 hours'; chip = chipC.red; }
+      }
+      return { name: r.name, msg: r.msg, status: status, chip: chip };
+    });
+    const ackCount = recipients.filter((r) => r.status === 'Acknowledged').length;
+    const ackSummary = !s.published ? 'Nothing is sent until the change is approved. Each vendor sees only their own line.' : ackCount + ' of ' + recipients.length + ' have acknowledged version 2.' + (ackCount === recipients.length ? ' Everyone is working from the same plan.' : '');
+
+    // day of
+    const dayGuests = s.published ? guests : 190;
+    const dayOverflow = s.published && overflow;
+    const applied = s.dayStage === 'applied';
+    const rowBase = 'display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; padding:12px 10px; border-top:1px solid #E6EBEF; border-radius:8px; ';
+    const tagBase = 'display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border-radius:999px; font-size:13px; font-weight:700; ';
+    const mk = (time, what, where, who, mode) => ({
+      time: time, what: what, where: where, who: who,
+      row: rowBase + (mode === 'now' ? 'background:#E6F0F7' : mode === 'changed' ? 'background:#FFF4E0' : ''),
+      tag: mode === 'now' ? 'Now' : mode === 'changed' ? 'Changed' : '',
+      tagStyle: mode === 'now' ? tagBase + 'background:#0F5C8A; color:#ffffff' : mode === 'changed' ? tagBase + 'background:#FFF0D2; color:#7A4B00' : 'display:none'
+    });
+    const breakWhere = dayOverflow ? 'Main hall and Gallery' : 'Main hall';
+    const runSheet = applied ? [
+      mk('09:30', 'Doors and registration', 'Foyer', 'Priya', 'now'),
+      mk('10:00', 'Panel: partner roadmap', 'Main hall', 'Sam', 'changed'),
+      mk('10:45', 'Keynote, Dr Amina Okoye', 'Main hall', 'Sam', 'changed'),
+      mk('11:45', 'Breakouts', breakWhere, 'Tolu', ''),
+      mk('12:30', 'Lunch service, hard stop', 'Atrium', 'Dev', '')
+    ] : [
+      mk('09:30', 'Doors and registration', 'Foyer', 'Priya', 'now'),
+      mk('10:00', 'Keynote, Dr Amina Okoye', 'Main hall', 'Sam', ''),
+      mk('11:00', 'Panel: partner roadmap', 'Main hall', 'Sam', ''),
+      mk('11:45', 'Breakouts', breakWhere, 'Tolu', ''),
+      mk('12:30', 'Lunch service, hard stop', 'Atrium', 'Dev', '')
+    ];
+
+    // record
+    const changeLog = [
+      { title: 'Version 1: plan confirmed', meta: 'Signed by Elena Ruiz on 1 October', approval: '190 guests, ' + fmt(baseCommitted) + ' committed', cost: fmt(baseCommitted), speed: 'Baseline' }
+    ];
+    const v2Approval = s.published ? 'Approved by ' + (needsClient ? 'Elena Ruiz' : 'Amara') + '. Published to ' + recDef.length + ' recipients.' : (needsClient && s.sent ? 'Waiting for Elena Ruiz.' : 'Draft, not yet sent.');
+    const v2Speed = s.published ? (s.hours === 24 && s.harbourAck ? 'All acknowledged in 2 days' : 'Acknowledgements open') : 'Not published';
+    changeLog.push({ title: 'Version 2: ' + n + ' more guests (' + guests + ')', meta: 'Requested by Elena Ruiz, 8 October at 09:12', approval: v2Approval, cost: '+' + fmt(total), speed: v2Speed });
+    if (applied) {
+      changeLog.push({ title: 'Version 3: panel and keynote swapped', meta: 'Reported by Sam on the day, 09:50', approval: 'Approved by Amara. Hard stops checked.', cost: '£0', speed: '4 people told in under 2 minutes' });
+    }
+    const vendorsOnFile = [
+      { name: 'Harbour Table Catering', line: '6 jobs. Usual reply 1.5 days. 15% surcharge inside 28 days.' },
+      { name: 'Soundwell AV', line: '5 jobs. Usual reply 1 day. On time 5 of 5. Second technician £950.' },
+      { name: 'ScreenWorks', line: '2 jobs. Usual reply 1 day. On time 2 of 2. Quote £780 in March.' },
+      { name: 'The Foundry', line: '4 jobs. Usual reply 2 days. Gallery £1,800 as an add on.' },
+      { name: 'Brightline Productions', line: '1 job. Reply took 3 days. Quote £1,050 in March.' }
+    ];
+
+    return {
+      accent: accent,
+      navItems: navItems,
+      railItems: railItems,
+      railEmpty: railEmpty,
+      versionLabel: 'Plan version ' + version,
+      isPlan: s.screen === 'plan',
+      isChange: s.screen === 'change',
+      isApprove: s.screen === 'approve',
+      isDay: s.screen === 'day',
+      isRecord: s.screen === 'record',
+      // plan
+      planSubtitle: dayGuests + ' guests, The Foundry, London. Confirmed 1 October. ' + (s.published ? 'Version 2 published.' : 'Version 1 is the plan everyone is working from.'),
+      showInbox: !s.published,
+      toChange: go('change'),
+      planLines: planLines,
+      planCommitted: fmt(planCommitted),
+      planBar: 'height:12px; border-radius:999px; background:' + accent + '; width:' + Math.min(100, Math.round(planCommitted / 600)) + '%',
+      planHeadroom: planLeft >= 0 ? fmt(planLeft) + ' of contingency left' : fmt(-planLeft) + ' over budget',
+      // change
+      added: n,
+      guestsTotal: guests,
+      fewer: () => this.resetFlow({ added: Math.max(10, n - 10) }),
+      more: () => this.resetFlow({ added: Math.min(50, n + 10) }),
+      impact: impact,
+      totalText: fmt(total),
+      showAv: overflow,
+      avOptions: avOptions,
+      impactBar: 'height:12px; border-radius:999px; background:' + (over ? '#B5391F' : accent) + '; width:' + Math.min(100, Math.round(total / headroom * 100)) + '%',
+      afterText: afterText,
+      afterStyle: afterStyle,
+      ruleText: ruleText,
+      toApprove: go('approve'),
+      // approve
+      approveSubtitle: approveSubtitle,
+      clientDraft: clientDraft,
+      showSend: needsClient && !s.sent,
+      showWait: needsClient && s.sent && !s.clientOk,
+      showPublish: needsClient && s.clientOk && !s.published,
+      showPublishDirect: !needsClient && !s.published,
+      showPublished: s.published,
+      sendToClient: () => this.setState({ sent: true }),
+      clientApproves: () => this.setState({ clientOk: true }),
+      publish: () => this.setState({ published: true }),
+      publishDirect: () => this.setState({ sent: true, clientOk: true, published: true }),
+      steps: steps,
+      recipients: recipients,
+      ackSummary: ackSummary,
+      showHourControl: s.published && s.hours === 0,
+      advance: () => this.setState({ hours: 24 }),
+      showChase: s.published && s.hours === 24 && !s.reminded,
+      sendReminder: () => this.setState({ reminded: true }),
+      showReminded: s.published && s.hours === 24 && s.reminded,
+      showHarbourReply: s.reminded && !s.harbourAck,
+      harbourReplies: () => this.setState({ harbourAck: true }),
+      // day
+      daySubtitle: dayGuests + ' guests expected. Version ' + version + ' is the plan on every phone.',
+      runSheet: runSheet,
+      showReport: s.dayStage === 'none',
+      showProposal: s.dayStage === 'proposed',
+      showApplied: applied,
+      reportLate: () => this.setState({ dayStage: 'proposed' }),
+      approveSwap: () => this.setState({ dayStage: 'applied' }),
+      dayOverflow: dayOverflow,
+      overflowGuests: dayGuests - 200,
+      stewardCount: 6 + (s.published ? stewN : 0),
+      // record
+      changeLog: changeLog,
+      vendorsOnFile: vendorsOnFile
+    };
+  }
+}
+</script>
+<script>
+(function () {
+  var tplHtml = document.getElementById('tpl').textContent;
+  var tree = new DOMParser().parseFromString('<body>' + tplHtml + '</body>', 'text/html').body;
+  var root = document.getElementById('app');
+  var logic = new Component({});
+  var EXPR = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+  function lookup(path, scope) {
+    return path.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, scope);
+  }
+  function whole(str, scope) {
+    var m = /^\s*\{\{\s*([\w.]+)\s*\}\}\s*$/.exec(str || '');
+    return m ? lookup(m[1], scope) : undefined;
+  }
+  function interp(str, scope) {
+    return str.replace(EXPR, function (_, p) { var v = lookup(p, scope); return v == null ? '' : String(v); });
+  }
+  function kids(node, scope) {
+    var out = [];
+    node.childNodes.forEach(function (c) { renderNode(c, scope).forEach(function (x) { out.push(x); }); });
+    return out;
+  }
+  function renderNode(node, scope) {
+    if (node.nodeType === 3) return [document.createTextNode(interp(node.nodeValue, scope))];
+    if (node.nodeType !== 1) return [];
+    var tag = node.localName;
+    if (tag === 'sc-if') return whole(node.getAttribute('value'), scope) ? kids(node, scope) : [];
+    if (tag === 'sc-for') {
+      var list = whole(node.getAttribute('list'), scope) || [];
+      var as = node.getAttribute('as');
+      var out = [];
+      list.forEach(function (item) {
+        var s2 = Object.create(scope); s2[as] = item;
+        kids(node, s2).forEach(function (x) { out.push(x); });
+      });
+      return out;
+    }
+    var el = document.createElementNS(node.namespaceURI, node.localName);
+    Array.prototype.forEach.call(node.attributes, function (a) {
+      var name = a.name;
+      if (name.indexOf('hint-') === 0) return;
+      if (name === 'onclick') {
+        var fn = whole(a.value, scope);
+        if (typeof fn === 'function') el.addEventListener('click', fn);
+        return;
+      }
+      el.setAttribute(name, a.value.indexOf('{{') >= 0 ? interp(a.value, scope) : a.value);
+    });
+    kids(node, scope).forEach(function (x) { el.appendChild(x); });
+    return [el];
+  }
+
+  window.__render = function () {
+    var y = window.scrollY;
+    var search = root.querySelector('input[type=search]');
+    var q = search ? search.value : '';
+    var btns = Array.prototype.slice.call(root.querySelectorAll('button'));
+    var focusIdx = btns.indexOf(document.activeElement);
+    var vals = logic.renderVals();
+    var nodes = kids(tree, vals);
+    root.replaceChildren.apply(root, nodes);
+    var s2 = root.querySelector('input[type=search]');
+    if (s2 && q) s2.value = q;
+    if (focusIdx >= 0) {
+      var nb = root.querySelectorAll('button');
+      if (nb[focusIdx]) nb[focusIdx].focus({ preventScroll: true });
+    }
+    window.scrollTo(0, y);
+  };
+  window.__render();
+})();
+</script>
+</body>
+</html>
